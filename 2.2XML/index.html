@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="EN">
+    <head>
+        <title>Choose a city</title>
+        <link rel="stylesheet" href="css/table.css">
+        <script type = 'module'>
+        import measurements from './js/measurements.js'
+        window.getMeasurements = function(place) {
+            const theMeasurements = measurements(window)
+            theMeasurements.getLatestMeasurementData()
+        }
+        </script>
+    </head>
+    <body onload="getMeasurements()">
+    <div>
+      <button onclick="getMeasurements()">Refresh</button>
+        <table id="latestMeasurements">
+            <caption><h2>Latest measurements</h2></caption>
+            <thead>
+            <tr>
+              <th>Place</th>
+              <th>Temperature</th>
+              <th>Precipitation</th>
+              <th>Wind</th>
+              <th>Cloud coverage</th>
+            </tr>
+            </thead>
+            <tbody id='latestMeasurementdata'></tbody>
+          </table>
+        </div>
+        <div>
+            <table id="minTemp">
+                <caption><h2>Minimum temperature for the last 5 days</h2></caption>
+                <thead>
+                <tr>
+                  <th>Place</th>
+                  <th>Temperature</th>
+                </tr>
+                </thead>
+                <tbody id='fivedaysTempBody'></tbody>
+              </table>
+        </div>
+        <div>
+            <table id="maxTemp">
+                <caption><h2>Maximum temperature for the last 5 days</h2></caption>
+                <thead>
+                <tr>
+                  <th>Place</th>
+                  <th>Temperature</th>
+                </tr>
+                </thead>
+                <tbody id='fivedayMaxTempBody'></tbody>
+              </table>
+        </div>
+        <div>
+            <table id="totalPrec">
+                <caption><h2>Total precipitation for the last 5 days</h2></caption>
+                <thead>
+                <tr>
+                  <th>Place</th>
+                  <th>Precipitation</th>
+                </tr>
+                </thead>
+                <tbody id='fivedayTotalPrecipitationBody'></tbody>
+              </table>
+        </div>
+        <div>
+            <table id="avgWindSpeed">
+                <caption><h2>Average wind speed for the last 5 days</h2></caption>
+                <thead>
+                <tr>
+                  <th>Place</th>
+                  <th>Average Wind Speed</th>
+                </tr>
+                </thead>
+                <tbody id='avgWindSpeedBody'></tbody>
+              </table>
+        </div>
+        <div>
+            <table id="predictionfor24hours">
+                <caption><h2>Predictions for the next 24 hours</h2></caption>
+                <thead>
+                <tr>
+                  <th>Place</th>
+                  <th>Time</th>
+                  <th>Temperature</th>
+                  <th>Precipitation</th>
+                  <th>Precipitation types</th>
+                  <th>Wind</th>
+                  <th>Wind directions</th>
+                  <th>Cloud coverage</th>
+                </tr>
+                </thead>
+                <tbody id='predictionfor24hoursBody'></tbody>
+              </table>
+        </div>
+    </body>
+</html>
