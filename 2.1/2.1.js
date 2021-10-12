@@ -370,6 +370,92 @@ function WeatherHistory(data)
         getPeriodFilter, setPeriodFilter, clearPeriodFilter, convertToUSUnits, convertToInternationalUnits, add, getFilteredData} 
 }
 
+
+function WeatherForecast(data){
+
+    function forPlace(place){
+        let temp =data
+                    .filter(value => value.getPlace() === place)
+
+        return  WeatherForecast(temp)
+    }
+
+    function forType(type) {
+        let temp =data
+            .filter(value => value.getType() === type)
+
+        return  WeatherForecast(temp)
+    }
+
+    function forPeriod(period) {
+        let temp =data
+            .filter(value => value.getTime() >= period.getFrom())
+            .filter(value => value.getTime() <= period.getTo())
+
+        return  WeatherForecast(temp)
+    }
+
+    function including(data){
+        let result = data.filter( () => data.some( r => data.includes(r)))
+        return WeatherForecast(result)
+    }
+
+    function convertToUSUnits(){
+        for (let i = 0; i < data.length; i++)
+        {
+            if ( data[i].getType() === 'Temperature' )
+            {
+                data[i].convertToF()
+            }
+            else if ( data[i].getType() === 'Precipitation' )
+            {
+                data[i].convertToInches()
+            }
+            else if ( data[i].getType() === 'Wind')
+            {
+                data[i].convertToMPH()
+            }
+        }
+    }
+    function convertToInternationalUnits(){
+        for (let i = 0; i < data.length; i++)
+        {
+            if ( data[i].getType() === 'Temperature')
+            {
+                data[i].convertToC()
+            }
+            else if (data[i].getType() === 'Precipitation')
+            {
+                data[i].convertToMM()
+            }
+            else if (data[i].getType() === 'Wind')
+            {
+                data[i].convertToMS()
+            }
+        }
+    }
+
+    function getAverageMinValue(){
+       let avg = data.reduce((a, b) => (a + b.getMin()),0) / data.length
+        return avg
+
+    }
+
+    function getAverageMaxValue() {
+        let avg = data.reduce((a, b) => (a + b.getMax()),0) / data.length
+        return avg
+    }
+
+    function getPredictions() {
+        return [...data]
+    }
+
+
+
+    return {forPlace,forType,forPeriod,including,getAverageMinValue,getAverageMaxValue,convertToUSUnits,convertToInternationalUnits,getPredictions }
+
+}
+
 // Kill me. Debugging stuff
 function Debug(){
     let tempobj1 = Temperature(new Date(2020,3,6,1,1,1,1), 'Aarhus', 'C', '50')
