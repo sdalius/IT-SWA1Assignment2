@@ -23,7 +23,7 @@ function DataType(state){
 function WeatherData(state) {
     const EventsNature = Events(state)
     const DataTypeNature = DataType(state)
-    function getValue() { return state.value }
+    function getValue() { return Number(state.value) }
     return { ...EventsNature, ...DataTypeNature, getValue }
 }
 
@@ -34,17 +34,15 @@ function Temperature(time, place, unit, value){
         if (state.unit === 'C' && state.type === 'Temperature') {
             state.value = Number((state.value * 1.8) + 32).toFixed(2)
             state.unit = 'F'
-        } else {
-            console.log('You can not convert this value to Fahrenheit')
         }
+        return Temperature(state.time, state.place, state.unit, state.value)
     }
     function convertToC(){
         if(state.unit === 'F' && state.type === 'Temperature'){
-            state.value = Number((state.value - 32) * (5/9)).toFixed(2)
+            state.value = Number(((state.value - 32) * (5/9))).toFixed(2)
             state.unit = 'C'
-        } else {
-            console.log('You can not convert this value to Celsius')
         }
+        return Temperature(state.time, state.place, state.unit, state.value)
     }
     return {...WeatherDataNature, convertToF, convertToC}
 }
@@ -60,17 +58,15 @@ function Precipitation(time, place, unit, value, precipitationType)
         if (state.unit === 'MM' && state.type === 'Precipitation'){
             state.value = Number((state.value) / 2.54).toFixed(2)
             state.unit = 'IN'
-        } else {
-            console.log('You can not convert this type to Inches')
         }
+        return Precipitation(state.time, state.place, state.unit, state.value, state.precipitationType)
     }
     function convertToMM(){
         if (state.unit === 'IN' && state.type === 'Precipitation'){
             state.value = Number((state.value) * 2.54).toFixed(2)
             state.unit = 'MM'
-        } else {
-            console.log('You can not convert this type to Inches')
         }
+        return Precipitation(state.time, state.place, state.unit, state.value, state.precipitationType)
     }
     return {...WeatherDataNature, getPrecipitationType, convertToInches, convertToMM}
 }
@@ -88,18 +84,16 @@ function Wind(time, place, unit, value, direction)
         if (state.unit === 'MS' && state.type === 'Wind') {
             state.value = Number((state.value) * 2.237).toFixed(2)
             state.unit = 'MPH'
-        } else {
-            console.log('You can not convert this type to MPH')
         }
+        return Wind(state.time, state.place, state.unit, state.value, state.direction)
     }
     function convertToMS()
     {
         if (state.unit == 'MPH' && state.type === 'Wind'){
             state.value = Number((state.value) / 2.237).toFixed(2)
             state.unit = 'MS'
-        } else {
-            console.log('You can not convert this type to MS')
         }
+        return Wind(state.time, state.place, state.unit, state.value, state.direction)
     }
     return {...WeatherDataNature, getDirection, convertToMPH, convertToMS}
 }
@@ -154,6 +148,7 @@ function TemperaturePrediction(time, place, unit, minValue, maxValue){
         if (state.unit === 'C' && state.type === 'Temperature') {
             state.value = Number((state.value * 1.8) + 32).toFixed(2)
             state.unit = 'F'
+            return TemperaturePrediction(state.time, state.place, state.unit, state.minValue, state.maxValue)
         } else {
             console.log('You can not convert this value to Fahrenheit')
         }
@@ -162,6 +157,7 @@ function TemperaturePrediction(time, place, unit, minValue, maxValue){
         if(state.unit === 'F' && state.type === 'Temperature'){
             state.value = Number((state.value - 32) * (5/9)).toFixed(2)
             state.unit = 'C'
+            return TemperaturePrediction(state.time, state.place, state.unit, state.minValue, state.maxValue)
         } else {
             console.log('You can not convert this value to Celsius')
         }
@@ -186,17 +182,15 @@ function PrecipitationPrediction(time, place, unit, minValue, maxValue)
         if (state.unit === 'MM' && state.type === 'Precipitation'){
             state.value = Number((state.value) / 2.54).toFixed(2)
             state.unit = 'IN'
-        } else {
-            console.log('You can not convert this type to Inches')
         }
+        return PrecipitationPrediction(state.time, state.place, state.unit, state.minValue, state.maxValue)
     }
     function convertToMM(){
         if (state.unit === 'IN' && state.type === 'Precipitation'){
             state.value = Number((state.value) * 2.54).toFixed(2)
             state.unit = 'MM'
-        } else {
-            console.log('You can not convert this type to Inches')
         }
+        return PrecipitationPrediction(state.time, state.place, state.unit, state.minValue, state.maxValue)
     }
     return {...WeatherPredictionNature, getPrecipitationTypes, convertToInches, convertToMM, matches}
 }
@@ -213,18 +207,16 @@ function WindPrediction(time, place, unit, minValue, maxValue)
         if (state.unit === 'MS' && state.type === 'Wind') {
             state.value = Number((state.value) * 2.237).toFixed(2)
             state.unit = 'MPH'
-        } else {
-            console.log('You can not convert this type to MPH')
         }
+        return WindPrediction(state.time, state.place, state.unit, state.minValue, state.maxValue)
     }
     function convertToMS()
     {
         if (state.unit == 'MPH' && state.type === 'Wind'){
             state.value = Number((state.value) / 2.237).toFixed(2)
             state.unit = 'MS'
-        } else {
-            console.log('You can not convert this type to MS')
         }
+        return WindPrediction(state.time, state.place, state.unit, state.minValue, state.maxValue)
     }
     return {...WeatherPredictionNature, getExpectedDirections, convertToMPH, convertToMS}
 }
@@ -238,166 +230,44 @@ function CloudCoveragePrediction(time, place, minValue, maxValue) {
 
 function WeatherHistory(data)
 {
-    let placeFilter = '', typeFilter = '', periodFilter = null, weatherData = new Array()
-    dataVerification();
-    function dataVerification(){
-    for (let i = 0; i < data.length; i++)
-    {
+    data.filter(function (e) {
         try{
-            if ( data[i].getType() === 'Precipitation' || 'Wind' || 'Temperature' || 'CloudCoverage' )
+            if (e.getType() === 'Temperature' || 'Precipitation' || 'Cloud Coverage' || 'Wind')
             {
-                weatherData.push(data[i])
-            }
-        }catch{
-            console.log('Object was not valid type')
+                return e
             }
         }
-    }
-    function getPlaceFilter(){
-        return placeFilter
-    }
-    function setPlaceFilter(setPlace){
-        placeFilter = setPlace
-    }
-    function clearPlaceFilter(){
-        placeFilter = ""
-    }
-    function getTypeFilter(){
-        return typeFilter
-    }
-    function setTypeFilter(settypeFilter){
-        typeFilter = settypeFilter
-    }
-    function clearTypeFilter(){
-        typeFilter = ""
-    }
-    function getPeriodFilter(){
-        return periodFilter
-    }
-    function setPeriodFilter(setPeriodFilter){
-        try
-        {
-            if (setPeriodFilter.getFrom() && setPeriodFilter.getTo())
-            {
-                periodFilter = setPeriodFilter
-            }
+        catch{
+            console.log('Object was not right, removing it from the array')
         }
-        catch
-        {
-            console.log("It is not a DateInterval object")
-        }
+    })
+
+    function forPlace(place){
+        let temp =data.filter(value => value.getPlace() === place)
+        return WeatherHistory(temp)
     }
-    function clearPeriodFilter(){
-        periodFilter = null
+    function forType(type) {
+        let temp =data.filter(value => value.getType() === type)
+        return WeatherHistory(temp)
     }
-    function convertToUSUnits(){
-        for (let i = 0; i < weatherData.length; i++)
-        {
-            if ( weatherData[i].getType() === 'Temperature' )
-            {
-                weatherData[i].convertToF()
-            }
-            else if ( weatherData[i].getType() === 'Precipitation' )
-            {
-                weatherData[i].convertToInches()
-            }
-            else if ( weatherData[i].getType() === 'Wind')
-            {
-                weatherData[i].convertToMPH()
-            }
-            continue;
-        }
+    function forPeriod(period) {
+        let temp =data.filter(value => value.getTime() >= period.getFrom() && value.getTime() <= period.getTo())
+        return WeatherHistory(temp)
     }
-    function convertToInternationalUnits(){
-        for (let i = 0; i < weatherData.length; i++)
-        {
-            if ( weatherData[i].getType() === 'Temperature')
-            {
-                weatherData[i].convertToC()
-            }
-            else if (weatherData[i].getType() === 'Precipitation')
-            {
-                weatherData[i].convertToMM()
-            }
-            else if (weatherData[i].getType() === 'Wind')
-            {
-                weatherData[i].convertToMS()
-            }
-            continue;
-        }
-    }
-    function add(data){
-        for (let i = 0; i < data.length; i++)
-        {
+    function including(setData){
+        setData.filter(function (e) {
             try{
-                if ( data[i].getType() === ('Precipitation' || 'Wind' || 'Temperature' || 'CloudCoverage') )
+                if (e.getType() === 'Temperature' || 'Precipitation' || 'Cloud Coverage' || 'Wind')
                 {
-                    weatherData.push(data[i])
+                    return e
                 }
             }
             catch{
-                console.log('Object was not valid type')
+                console.log('Object was not right, removing it from the array')
             }
-        }
-    }
-
-    function getFilteredData()
-    {
-        let sortedArray = new Array()
-
-        if (placeFilter === "" || typeFilter === "" || periodFilter === null)
-        {
-            return weatherData
-        }
-        else{
-            for (let i = 0; i < weatherData.length; i++)
-            {
-                if (weatherData[i].getType() === typeFilter)
-                {
-                    if (weatherData[i].getPlace() === placeFilter)
-                    {
-                        if (weatherData[i].getTime() > periodFilter.getFrom() && weatherData[i].getTime() < periodFilter.getTo())
-                        {
-                            sortedArray.push(weatherData[i])
-                        }
-                    }
-                }
-            }
-            return sortedArray
-        }
-    }
-    return {WeatherHistory, getPlaceFilter, setPlaceFilter, clearPlaceFilter, getTypeFilter, setTypeFilter, clearTypeFilter, 
-        getPeriodFilter, setPeriodFilter, clearPeriodFilter, convertToUSUnits, convertToInternationalUnits, add, getFilteredData} 
-}
-
-
-function WeatherForecast(data){
-
-    function forPlace(place){
-        let temp =data
-                    .filter(value => value.getPlace() === place)
-
-        return  WeatherForecast(temp)
-    }
-
-    function forType(type) {
-        let temp =data
-            .filter(value => value.getType() === type)
-
-        return  WeatherForecast(temp)
-    }
-
-    function forPeriod(period) {
-        let temp =data
-            .filter(value => value.getTime() >= period.getFrom())
-            .filter(value => value.getTime() <= period.getTo())
-
-        return  WeatherForecast(temp)
-    }
-
-    function including(data){
-        let result = data.filter( () => data.some( r => data.includes(r)))
-        return WeatherForecast(result)
+        })
+        let result = data.concat(setData)
+        return WeatherHistory(result)
     }
 
     function convertToUSUnits(){
@@ -416,6 +286,7 @@ function WeatherForecast(data){
                 data[i].convertToMPH()
             }
         }
+        return WeatherHistory(data)
     }
     function convertToInternationalUnits(){
         for (let i = 0; i < data.length; i++)
@@ -433,12 +304,130 @@ function WeatherForecast(data){
                 data[i].convertToMS()
             }
         }
+        return WeatherHistory(data)
+    }
+    function lowestValue(){
+        if (data.length > 0)
+        {
+            let previousObject
+            for (let i = 0; i < data.length; i++)
+            {
+                if (i == 0)
+                {
+                    previousObject = data[i]
+                }
+                else{
+                    previousObject = data[i - 1]
+
+                    if (previousObject.getType() === data[i].getType())
+                    {
+                        continue;
+                    }
+                    else{
+                        console.log('types are different. Returning.')
+                        return undefined
+                    }
+                }
+            }
+        }
+        const lowestNumber = data.map(element => element.getValue()).reduce((oldest, currValue) => ( currValue < oldest) ? oldest = currValue : oldest)
+        return lowestNumber
+     }
+
+     function getData() {
+        return [...data]
+    }
+    return {forPlace, forType, forPeriod, including, convertToUSUnits, convertToInternationalUnits, lowestValue, getData}
+}
+
+
+function WeatherForecast(data){
+
+    data.filter(function (e) {
+        try{
+            if (e.getType() === 'Temperature' || 'Precipitation' || 'Cloud Coverage' || 'Wind')
+            {
+                return e
+            }
+        }
+        catch{
+            console.log('Object was not right, removing it from the array')
+        }
+    })
+
+    function forPlace(place){
+        let temp = data.filter(value => value.getPlace() === place)
+        return WeatherForecast(temp)
+    }
+
+    function forType(type) {
+        let temp = data.filter(value => value.getType() === type)
+
+        return WeatherForecast(temp)
+    }
+
+    function forPeriod(period) {
+        let temp = data.filter(value => value.getTime() >= period.getFrom() && value.getTime() <= period.getTo())
+        return WeatherForecast(temp)
+    }
+
+    function including(setData){
+        setData.filter(function (e) {
+            try{
+                if (e.getType() === 'Temperature' || 'Precipitation' || 'Cloud Coverage' || 'Wind')
+                {
+                    return e
+                }
+            }
+            catch{
+                console.log('Object was not right, removing it from the array')
+            }
+        })
+        let result = data.concat(setData)
+        return WeatherHistory(result)
+    }
+
+    function convertToUSUnits(){
+        for (let i = 0; i < data.length; i++)
+        {
+            if ( data[i].getType() === 'Temperature' )
+            {
+                data[i].convertToF()
+            }
+            else if ( data[i].getType() === 'Precipitation' )
+            {
+                data[i].convertToInches()
+            }
+            else if ( data[i].getType() === 'Wind')
+            {
+                data[i].convertToMPH()
+            }
+        }
+        return WeatherHistory(data)
+    }
+
+    function convertToInternationalUnits(){
+        for (let i = 0; i < data.length; i++)
+        {
+            if ( data[i].getType() === 'Temperature')
+            {
+                data[i].convertToC()
+            }
+            else if (data[i].getType() === 'Precipitation')
+            {
+                data[i].convertToMM()
+            }
+            else if (data[i].getType() === 'Wind')
+            {
+                data[i].convertToMS()
+            }
+        }
+        return WeatherHistory(data)
     }
 
     function getAverageMinValue(){
-       let avg = data.reduce((a, b) => (a + b.getMin()),0) / data.length
+        let avg = data.reduce((a, b) => (a + b.getMin()),0) / data.length
         return avg
-
     }
 
     function getAverageMaxValue() {
@@ -449,29 +438,5 @@ function WeatherForecast(data){
     function getPredictions() {
         return [...data]
     }
-
-
-
     return {forPlace,forType,forPeriod,including,getAverageMinValue,getAverageMaxValue,convertToUSUnits,convertToInternationalUnits,getPredictions }
-
-}
-
-// Kill me. Debugging stuff
-function Debug(){
-    let tempobj1 = Temperature(new Date(2020,3,6,1,1,1,1), 'Aarhus', 'C', '50')
-    let tempobj2 = Temperature(new Date(2020,2,1,1,1,1,1), 'Copenhagen', 'C', '40')
-    let tempobj3 = Temperature(new Date(2020,2,17,1,1,1,1), 'Vejen', 'C', '15')
-    let tempobj4 = Temperature(new Date(2020,2,24,1,1,1,1), 'Odense', 'C', '13')
-    let tempArray = new Array()
-    tempArray.push(tempobj1, tempobj2, tempobj3, tempobj4)
-    
-    let weatherHisObj = WeatherHistory(tempArray)
-    let dateInt = DateInterval(new Date(2020,2,0,0,0,0,0), new Date(2020,4,1,1,1,1,1))
-    console.log('FROM:', dateInt.getFrom())
-    console.log('TO:', dateInt.getTo())
-    //console.log(weatherHisObj.getData())
-    weatherHisObj.setPlaceFilter('Vejen')
-    weatherHisObj.setPeriodFilter(dateInt)
-    weatherHisObj.setTypeFilter('Temperature')
-    console.log(weatherHisObj.getFilteredData()[0].getTime())
 }
