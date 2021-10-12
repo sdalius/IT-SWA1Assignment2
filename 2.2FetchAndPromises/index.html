@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Measurement</title>
+    <script type="module">
+        import {service} from "./functions.js";
+        window.init = function () {
+            let cityArray = ["Horsens","Aarhus","Copenhagen"]
+            cityArray.forEach(value => {service().getLatestMeasurementData(value)})
+            cityArray.forEach(value => {service().getMinOrMaxTemp(value,"min")})
+            cityArray.forEach(value => {service().getMinOrMaxTemp(value,"max")})
+            cityArray.forEach(value => {service().getTotalPrecipitation(value)})
+            cityArray.forEach(value => {service().getWindSpeed(value)})
+            cityArray.forEach(value => {service().getHourlyPredictionForNext24Hours(value)})
+        }
+    </script>
+</head>
+<body onload="init()">
+<div>
+    <h1>latest Measurement of each kind</h1>
+    <div id="latestMeasurement"></div>
+    <h1>Minimum temperature for the last 5 days</h1>
+    <div  id="minTemp5days"></div>
+    <h1>Maximum temperature for the last 5 days</h1>
+    <div  id="maxTemp5days"></div>
+    <h1>Total precipitation for the last 5 days</h1>
+    <div  id="precLast5days"></div>
+    <h1>Average Wind Speed for the last 5 days</h1>
+    <div  id="averageWindSpeed"></div>
+    <h1>Hourly prediction for the next 24 hours</h1>
+    <div  id="predictions"></div>
+
+</div>
+</body>
+</html>
